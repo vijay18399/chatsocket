@@ -9,7 +9,15 @@ var Message = require("./models/message");
 var jwt = require("jsonwebtoken");
 var cors = require("cors");
 var app = express();
-var urlize = require("urlize.js");
+function replace_content(content)
+{
+var exp_match = /(\b(https?|):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+var element_content=content.replace(exp_match, "<ion-anchor href='$1'>$1</ion-anchor>");
+var new_exp_match =/(^|[^\/])(www\.[\S]+(\b|$))/gim;
+var new_content=element_content.replace(new_exp_match, '$1<ion-anchor target="_blank" href="http://$2">$2</ion-anchor>');
+return new_content;
+}
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -68,9 +76,9 @@ io.on("connection", socket => {
     var x = sentiment.analyze(message.message);
     message.score = x.score;
     message.spamcheck = spamcheck.detect(message.message);
-    message.message.replace(/(https?:\/\/[^\s]+)/g,"<a href='$1'  >$1</a>")
+    // message.message.replace(/(https?:\/\/[^\s]+)/g,"<a href='$1'  >$1</a>")
     message.createdAt = new Date();
-    message.message = urlize(message.message);
+    message.message = replace_content(message.message);
     let newMessage = Message(message);
     newMessage.save(function(err, data) {
       if (err) {
@@ -89,7 +97,7 @@ io.on("connection", socket => {
     message.score = x.score;
     message.spamcheck = spamcheck.detect(message.message);
     message.createdAt = new Date();
-    message.message = urlize(message.message);
+    message.message = replace_content(message.message);
     let newMessage = Message(message);
     newMessage.save(function(err, data) {
       if (err) {
