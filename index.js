@@ -9,7 +9,7 @@ var Message = require("./models/message");
 var jwt = require("jsonwebtoken");
 var cors = require("cors");
 var app = express();
-var urlizeJs = require("urlize.js");
+var urlize = require("urlize.js");
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -89,6 +89,7 @@ io.on("connection", socket => {
     message.score = x.score;
     message.spamcheck = spamcheck.detect(message.message);
     message.createdAt = new Date();
+    message.message = urlize(message.message);
     let newMessage = Message(message);
     newMessage.save(function(err, data) {
       if (err) {
