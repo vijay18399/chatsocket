@@ -78,7 +78,7 @@ io.on("connection", socket => {
     message.spamcheck = spamcheck.detect(message.message);
     // message.message.replace(/(https?:\/\/[^\s]+)/g,"<a href='$1'  >$1</a>")
     message.createdAt = new Date();
-    message.message = replace_content(message.message);
+    //message.message = replace_content(message.message);
     let newMessage = Message(message);
     newMessage.save(function(err, data) {
       if (err) {
@@ -97,7 +97,7 @@ io.on("connection", socket => {
     message.score = x.score;
     message.spamcheck = spamcheck.detect(message.message);
     message.createdAt = new Date();
-    message.message = replace_content(message.message);
+    //message.message = replace_content(message.message);
     let newMessage = Message(message);
     newMessage.save(function(err, data) {
       if (err) {
